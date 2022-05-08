@@ -7,6 +7,8 @@
 //    } else {
 //        println!{"The altitude is located beyond the troposphere"}
 //    }
+//    Some modes to implement as flags:
+//    Not aproximate as defaul and aproximate with a flag
 const BASE_TEMP: f64 = 288.15;
 const BASE_PRESS: f64 = 101325.0;
 const BASE_DENS: f64 = 1.225;
@@ -30,6 +32,9 @@ fn densy(alt: f64) -> f64 {
 }
 
 fn main() {
- let pressure = temp(1524.0);
-    println!("{}", pressure);
+    let altitude = 1524.0;
+    let temperature = temp(1524.0);
+    let pressure = press(1524.0);
+    let density = densy(1524.0);
+    println!("At {}m of altitude the air properties are the followings:\nTemperature = {} K\nPressure = {} Pa\nDensity = {} kg/m3", altitude, temperature, pressure, density);
 }
