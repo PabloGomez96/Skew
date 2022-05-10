@@ -23,40 +23,54 @@ const STRATO_PRESS:f64 = 22552.0;
 const STRATO_DENS:f64 = 0.3629;
 const STRATO_TERM_GRAD:f64 = 0.0;
 const STRATO_ALTITUDE:f64 = 11000.0;
+const EARTH_RADIUS:f64 = 6356766.0;
+
+fn geoalt(alt: f64) -> f64 {
+    let result = alt * (EARTH_RADIUS / (EARTH_RADIUS + alt));
+    result
+}
 
 fn temp(alt: f64) -> f64 {
-    let result = BASE_TEMP + (TROPO_TERM_GRAD * alt);
+    let altG = geoalt(alt);
+    let result = BASE_TEMP + (TROPO_TERM_GRAD * altG);
     result
 }
 
 fn press(alt: f64) -> f64 {
-    let result = BASE_PRESS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * alt)) / (BASE_TEMP), (GRAV) / (AIR_IDEAL_CONS * TROPO_TERM_GRAD));
+    let altG = geoalt(alt);
+    let result = BASE_PRESS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * altG)) / (BASE_TEMP), (GRAV) / (AIR_IDEAL_CONS * TROPO_TERM_GRAD));
     result
 }
 
 fn densy(alt: f64) -> f64 {
-    let result = BASE_DENS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * alt)) / (BASE_TEMP), ((GRAV) / (AIR_IDEAL_CONS * TROPO_TERM_GRAD)) - 1.0);
+    let altG = geoalt(alt);
+    let result = BASE_DENS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * altG)) / (BASE_TEMP), ((GRAV) / (AIR_IDEAL_CONS * TROPO_TERM_GRAD)) - 1.0);
     result
 }
 
 fn strato_press(alt: f64) -> f64 {
-    let result = STRATO_PRESS * f64::exp(((GRAV) / (AIR_IDEAL_CONS * STRATO_TEMP)) * (alt - STRATO_ALTITUDE));
+    let altG = geoalt(alt);
+    let result = STRATO_PRESS * f64::exp(((GRAV) / (AIR_IDEAL_CONS * STRATO_TEMP)) * (altG - STRATO_ALTITUDE));
     result
 }
 
 fn strato_densy(alt: f64) -> f64 {
-    let result = STRATO_DENS * f64::exp(((GRAV) / (AIR_IDEAL_CONS * STRATO_TEMP)) * (alt - STRATO_ALTITUDE));
+    let altG = geoalt(alt);
+    let result = STRATO_DENS * f64::exp(((GRAV) / (AIR_IDEAL_CONS * STRATO_TEMP)) * (altG - STRATO_ALTITUDE));
     result
 }
 
 fn main() {
-    let altitude = 1524.0;
-    let temperature = temp(7890.0);
-    let pressure = press(7890.0);
-    let density = densy(7890.0);
+    let altitude = 7900.0;
+    let altitudeE = 17900.0;
+    let temperature = temp(altitude);
+    let pressure = press(altitude);
+    let density = densy(altitude);
     println!("At {}m of altitude the air properties are the followings:\nTemperature = {} K\nPressure = {} Pa\nDensity = {} kg/m3", altitude, temperature, pressure, density);
-    let testpress = strato_press(17850.0);
+    let testpress = strato_press(altitudeE);
     println!("{}", testpress);
-    let testdensy = strato_densy(17850.0);
+    let testdensy = strato_densy(altitudeE);
     println!("{}", testdensy);
+    let testgeoalt = geoalt(altitudeE);
+    println!("{}", testgeoalt);
 }
