@@ -10,6 +10,11 @@
 //    Some modes to implement as flags:
 //    Not aproximate as defaul and aproximate with a flag
 //    Geometric to geopotential altitude conversion need to be added to increase the accuracy
+//    clarify that the tool aplication is for air only
+//    evalute run cp and sound_speed methods with temperature as arguments directly instead of calculating those values in the method
+//    for realising the geopetential correction will be done after catching the altitude entered by
+//    the user and this corrected altitude will be passed to other functions as argument for further
+//    calculations, that means in any method will be correction altitude related
 use physical_constants;
 
 const BASE_TEMP: f64 = 288.15;
@@ -21,9 +26,10 @@ const AIR_IDEAL_CONS: f64 = 287.0;
 const STRATO_TEMP: f64 = 216.66;
 const STRATO_PRESS:f64 = 22552.0;
 const STRATO_DENS:f64 = 0.3629;
-const STRATO_TERM_GRAD:f64 = 0.0;
 const STRATO_ALTITUDE:f64 = 11000.0;
 const EARTH_RADIUS:f64 = 6356766.0;
+const BASE_VISCOSITY:f64 = 1.7894e-5;
+const SUTHERLAND_TEMP:f64 = 110.0;
 
 fn geoalt(alt: f64) -> f64 {
     let result = alt * (EARTH_RADIUS / (EARTH_RADIUS + alt));
@@ -38,27 +44,40 @@ fn temp(alt: f64) -> f64 {
 
 fn press(alt: f64) -> f64 {
     let altG = geoalt(alt);
-    let result = BASE_PRESS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * altG)) / (BASE_TEMP), (GRAV) / (AIR_IDEAL_CONS * TROPO_TERM_GRAD));
+    let result = BASE_PRESS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * altG)) / BASE_TEMP, GRAV / (AIR_IDEAL_CONS * TROPO_TERM_GRAD));
     result
 }
 
 fn densy(alt: f64) -> f64 {
     let altG = geoalt(alt);
-    let result = BASE_DENS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * altG)) / (BASE_TEMP), ((GRAV) / (AIR_IDEAL_CONS * TROPO_TERM_GRAD)) - 1.0);
+    let result = BASE_DENS * f64::powf((BASE_TEMP + (TROPO_TERM_GRAD * altG)) / BASE_TEMP, (GRAV / (AIR_IDEAL_CONS * TROPO_TERM_GRAD)) - 1.0);
     result
 }
 
 fn strato_press(alt: f64) -> f64 {
     let altG = geoalt(alt);
-    let result = STRATO_PRESS * f64::exp(((GRAV) / (AIR_IDEAL_CONS * STRATO_TEMP)) * (altG - STRATO_ALTITUDE));
+    let result = STRATO_PRESS * f64::exp((GRAV / (AIR_IDEAL_CONS * STRATO_TEMP)) * (altG - STRATO_ALTITUDE));
     result
 }
 
 fn strato_densy(alt: f64) -> f64 {
     let altG = geoalt(alt);
-    let result = STRATO_DENS * f64::exp(((GRAV) / (AIR_IDEAL_CONS * STRATO_TEMP)) * (altG - STRATO_ALTITUDE));
+    let result = STRATO_DENS * f64::exp((GRAV / (AIR_IDEAL_CONS * STRATO_TEMP)) * (altG - STRATO_ALTITUDE));
     result
 }
+
+fn visco(alt: f64) -> f64 {
+    let altG = geoalt(alt);
+    let alt_temp = temp(altG);
+    let result = BASE_VISCOSITY * ((BASE_TEMP + SUTHERLAND_TEMP) / (alt_temp + SUTHERLAND_TEMP)) * f64::powf(alt_temp / BASE_TEMP, 1.5);
+    result
+}
+
+//fn ideal_cp() -> f64 {}
+
+//fn ideal_cv() -> f64 {}
+
+//fn sound_speed() -> f64 {}
 
 fn main() {
     let altitude = 7900.0;
@@ -73,4 +92,6 @@ fn main() {
     println!("{}", testdensy);
     let testgeoalt = geoalt(altitudeE);
     println!("{}", testgeoalt);
+    let testvisc = visco(5000.0);
+    println!("{}", testvisc);
 }
