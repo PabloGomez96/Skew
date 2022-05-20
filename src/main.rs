@@ -80,23 +80,21 @@ fn main() {
     let str_input = command.next().unwrap();
     let value: f64 = str_input.parse().expect("Some weird error!");
     let altitude = geo_alt(value);
-    if altitude >= 0.0 && altitude <= 11000.0 {
-        let temperature = temp(altitude);
-        let pressure = press(altitude);
-        let density = densy(altitude);
-        println!("At {}m of altitude the air properties are the followings:\nTemperature = {} K\nPressure = {} Pa\nDensity = {} kg/m3", altitude, temperature, pressure, density);
+    let properties: [f64; 5] = if altitude >= 0.0 && altitude <= 11000.0 {
+        [temp(altitude),
+        press(altitude),
+        densy(altitude),
+        visco(altitude),
+        sound_speed(altitude)]
         } else if altitude > 11000.0 && altitude <= 25000.0 {
-            let temperature = STRATO_TEMP;
-            let pressure = strato_press(altitude);
-            let density = strato_densy(altitude);
-            println!("At {}m of altitude the air properties are the followings:\nTemperature = {} K\nPressure = {} Pa\nDensity = {} kg/m3", altitude, temperature, pressure, density);
+            [STRATO_TEMP,
+            strato_press(altitude),
+            strato_densy(altitude),
+            visco(altitude),
+            sound_speed(altitude)]
+        } else {
+            [0.0,0.0,0.0,0.0,0.0]
         };
-    let testvisc = visco(5000.0);
-    println!("{}", testvisc);
-    let testcp = ideal_cp(700.0);
-    println!("{}", testcp);
-    let gamma = testcp / ideal_cv(700.0);
-    println!("{}", gamma);
-    let altc = sound_speed(7000.0);
-    println!("{:.2}", altc);
-}
+    println!("{:?}", properties);
+    //println!("At {}m of altitude the air properties are the followings:\nTemperature = {} K\nPressure = {} Pa\nDensity = {} kg/m3", altitude, temperature, pressure, density);
+    }
