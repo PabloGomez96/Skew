@@ -95,14 +95,12 @@ fn main() {
             densy(altitude),
             visco(altitude) * 100000.0,
             sound_speed(altitude)]
-        } else if altitude > 11000.0 && altitude <= 25000.0 {
+        } else {
             [STRATO_TEMP,
             strato_press(altitude),
             strato_densy(altitude),
             visco(altitude) * 100000.0,
             sound_speed(altitude)]
-        } else {
-            [0.0,0.0,0.0,0.0,0.0]
         };
-    println!("At {}m of altitude the air properties are the followings:\nTemperature = {:.2} K\nPressure = {:.2} Pa\nDensity = {:.3} kg/m3\nViscosity = {:.5}e-5 Pa*s\nLocal speed of sound = {:.2}m/s", value, properties[0], properties[1], properties[2], properties[3], properties[4]);
+    println!("At {}m of altitude the air properties are the followings:\nTemperature = {:.2} K\nPressure = {:.2} Pa\nDensity = {:.3} kg/m3\nViscosity = {:.5}e-5 Pa*s\nLocal speed of sound = {:.2} m/s", value, properties[0], properties[1], properties[2], properties[3], properties[4]);
     }
