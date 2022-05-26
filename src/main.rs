@@ -1,10 +1,11 @@
 //    Some modes to implement as flags:
 //    Aproximate as defaul and not aproximate with a flag
 //    A flag to print the atmosphere leyer of the altitude value entered
+//    A flag for imperial unit system calculations end resuts
 //    clarify that the tool aplication is for air only temperature range of usage [273 - 1800]K 
 //    theory source: Yunus cengel for Thermodynamics, Intro to flight to speed of sounf, sutherland
 //    for viscosity and ICAO ISA model for everything else
-//    fix the viscosity aproximation
+//    Implement a new method to convert the properties array from SI to Imperial
 use physical_constants;
 
 const BASE_TEMP: f64 = 288.15;
@@ -78,8 +79,11 @@ fn sound_speed(alt: f64) -> f64 {
 
 fn main() {
     let mut command = std::env::args().skip(1);
-    let str_input = command.next().unwrap();
-    let value: f64 = str_input.parse().expect("The expected value is a number, not a string!");
+    let mut flag = std::env::args().skip(2);
+    let alt_input = command.next().unwrap();
+    let flag_input = flag.next().unwrap();
+    println!("{}", flag_input);
+    let value: f64 = alt_input.parse().expect("The expected value is a number, not a string!");
     if value < 0.0 {
         panic!("You are under the ground!!!");
     } else if value > 25000.0 {
@@ -102,5 +106,6 @@ fn main() {
             visco(altitude) * 100000.0,
             sound_speed(altitude)]
         };
-    println!("At {}m of altitude the air properties are the followings:\nTemperature = {:.2} K\nPressure = {:.2} Pa\nDensity = {:.3} kg/m3\nViscosity = {:.5}e-5 Pa*s\nLocal speed of sound = {:.2} m/s", value, properties[0], properties[1], properties[2], properties[3], properties[4]);
+    let message = "At {}m of altitude the air properties are the followings:\nTemperature = {:.2} K\nPressure = {:.2} Pa\nDensity = {:.3} kg/m3\nViscosity = {:.5}e-5 Pa*s\nLocal speed of sound = {:.2} m/s";
+    println!(message, value, properties[0], properties[1], properties[2], properties[3], properties[4]);
     }
