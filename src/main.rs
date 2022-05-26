@@ -79,7 +79,7 @@ fn sound_speed(alt: f64) -> f64 {
 fn main() {
     let mut command = std::env::args().skip(1);
     let str_input = command.next().unwrap();
-    let value: f64 = str_input.parse().expect("Some weird error!");
+    let value: f64 = str_input.parse().expect("The expected value is a number, not a string!");
     if value < 0.0 {
         panic!("You are under the ground!!!");
     } else if value > 25000.0 {
@@ -93,16 +93,16 @@ fn main() {
             [temp(altitude),
             press(altitude),
             densy(altitude),
-            visco(altitude),
+            visco(altitude) * 100000.0,
             sound_speed(altitude)]
         } else if altitude > 11000.0 && altitude <= 25000.0 {
             [STRATO_TEMP,
             strato_press(altitude),
             strato_densy(altitude),
-            visco(altitude),
+            visco(altitude) * 100000.0,
             sound_speed(altitude)]
         } else {
             [0.0,0.0,0.0,0.0,0.0]
         };
-    println!("At {:.2}m of altitude the air properties are the followings:\nTemperature = {:.2} K\nPressure = {:.2} Pa\nDensity = {:.2} kg/m3\nViscosity = {:.2} Pa*s\nLocal speed of sound = {:.2}m/s", value, properties[0], properties[1], properties[2], properties[3], properties[4]);
+    println!("At {}m of altitude the air properties are the followings:\nTemperature = {:.2} K\nPressure = {:.2} Pa\nDensity = {:.3} kg/m3\nViscosity = {:.5}e-5 Pa*s\nLocal speed of sound = {:.2}m/s", value, properties[0], properties[1], properties[2], properties[3], properties[4]);
     }
