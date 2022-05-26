@@ -4,6 +4,7 @@
 //    clarify that the tool aplication is for air only temperature range of usage [273 - 1800]K 
 //    theory source: Yunus cengel for Thermodynamics, Intro to flight to speed of sounf, sutherland
 //    for viscosity and ICAO ISA model for everything else
+//    fix the viscosity aproximation
 use physical_constants;
 
 const BASE_TEMP: f64 = 288.15;
@@ -79,13 +80,21 @@ fn main() {
     let mut command = std::env::args().skip(1);
     let str_input = command.next().unwrap();
     let value: f64 = str_input.parse().expect("Some weird error!");
+    if value < 0.0 {
+        panic!("You are under the ground!!!");
+    } else if value > 25000.0 {
+        panic!("You are too high for air properties calculation!");
+    } else {
+        true;
+    };
     let altitude = geo_alt(value);
-    let properties: [f64; 5] = if altitude >= 0.0 && altitude <= 11000.0 {
-        [temp(altitude),
-        press(altitude),
-        densy(altitude),
-        visco(altitude),
-        sound_speed(altitude)]
+    let properties: [f64; 5] =
+        if altitude >= 0.0 && altitude <= 11000.0 {
+            [temp(altitude),
+            press(altitude),
+            densy(altitude),
+            visco(altitude),
+            sound_speed(altitude)]
         } else if altitude > 11000.0 && altitude <= 25000.0 {
             [STRATO_TEMP,
             strato_press(altitude),
@@ -95,6 +104,5 @@ fn main() {
         } else {
             [0.0,0.0,0.0,0.0,0.0]
         };
-    println!("{:?}", properties);
-    //println!("At {}m of altitude the air properties are the followings:\nTemperature = {} K\nPressure = {} Pa\nDensity = {} kg/m3", altitude, temperature, pressure, density);
+    println!("At {:.2}m of altitude the air properties are the followings:\nTemperature = {:.2} K\nPressure = {:.2} Pa\nDensity = {:.2} kg/m3\nViscosity = {:.2} Pa*s\nLocal speed of sound = {:.2}m/s", value, properties[0], properties[1], properties[2], properties[3], properties[4]);
     }
