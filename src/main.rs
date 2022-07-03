@@ -1,9 +1,10 @@
 use physical_constants;
 
-const BASE_TEMP: f64 = 288.15;
-const BASE_PRESS: f64 = 101325.0;
-const BASE_DENS: f64 = 1.225;
-const TROPO_TERM_GRAD: f64 = -6.5e-3;
+//List of pyshical constants
+const BASE_TEMP: f64 = 288.15;        //Kelvin, at MSL
+const BASE_PRESS: f64 = 101325.0;     //Pascals, at MSL
+const BASE_DENS: f64 = 1.225;         //Kilograms per cubic meter, at MSL
+const TROPO_TERM_GRAD: f64 = -6.5e-3; //
 const GRAV: f64 = -1.0 * physical_constants::STANDARD_ACCELERATION_OF_GRAVITY;
 const AIR_IDEAL_CONS: f64 = 287.0;
 const STRATO_TEMP: f64 = 216.66;
@@ -71,10 +72,7 @@ fn sound_speed(alt: f64) -> f64 {
 
 fn main() {
     let mut command = std::env::args().skip(1);
-    //let mut flag = std::env::args().skip(2);
     let alt_input = command.next().unwrap();
-    //let flag_input = flag.next().unwrap();
-    //println!("{}", flag_input);
     let value: f64 = alt_input.parse().expect("The expected value is a number, not a string!");
     if value < 0.0 {
         panic!("You are under the ground!!!");
