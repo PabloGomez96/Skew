@@ -29,11 +29,11 @@ cd Skew
 ```sh
 cargo build --release
 ```
-5. Copy the brand new compiled binary to a directory contained by your $PATH, for a single user usage of the programm you would run the following command
+5. Copy the brand new compiled binary to a directory contained by your $PATH, for a single user usage of the program you would run the following command
 ```sh
 cp ./target/release/Skew ~/.local/bin
 ```
-Or run the following command for an agnostic user usage for the programm
+Or run the following command for an agnostic user usage for the program
 ```sh
 cp ./target/release/Skew /usr/local/bin/
 ```
